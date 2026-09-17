@@ -1,0 +1,35 @@
+.sbd-home {
+  background-color: #fdf6e3;
+  min-height: 100%;
+}
+
+.sbd-hero {
+  background-color: #1f5c5c;
+  padding: 3.5rem 0 3rem;
+  text-align: center;
+}
+
+.sbd-hero-title {
+  color: #fdf6e3;
+  font-weight: 700;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.sbd-hero-subtitle {
+  color: #e0a72e;
+  font-size: 1.1rem;
+  margin-bottom: 1.75rem;
+}
+
+.sbd-searchbar-wrap {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.sbd-empty-state {
+  text-align: center;
+  color: #2c2c2c;
+  font-size: 1.1rem;
+  padding: 2rem 0;
+}

@@ -1,0 +1,17 @@
+.sbd-footer {
+  background-color: #1f5c5c;
+  color: #fdf6e3;
+  text-align: center;
+  padding: 1.5rem 0;
+  margin-top: auto;
+}
+
+.sbd-footer a {
+  color: #e0a72e;
+  text-decoration: none;
+}
+
+.sbd-footer a:hover {
+  color: #fdf6e3;
+  text-decoration: underline;
+}

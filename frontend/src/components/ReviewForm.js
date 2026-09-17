@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { submitReview } from "../services/api";
+import "./ReviewForm.css";
 
 const ReviewForm = ({ businessId }) => {
   const [rating, setRating] = useState(0);
@@ -7,16 +8,20 @@ const ReviewForm = ({ businessId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await submitReview(businessId, { rating, comment });
-    alert("Review submitted successfully!");
-    setRating(0);
-    setComment("");
+    try {
+      await submitReview(businessId, { rating, comment });
+      alert("Review submitted successfully!");
+      setRating(0);
+      setComment("");
+    } catch (error) {
+      alert("Couldn't submit review — you may need to log in first.");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="sbd-review-form">
       <div className="mb-3">
-        <label>Rating</label>
+        <label className="sbd-form-label">Rating</label>
         <input
           type="number"
           min="1"
@@ -27,14 +32,14 @@ const ReviewForm = ({ businessId }) => {
         />
       </div>
       <div className="mb-3">
-        <label>Comment</label>
+        <label className="sbd-form-label">Comment</label>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           className="form-control"
         />
       </div>
-      <button type="submit" className="btn btn-primary">
+      <button type="submit" className="sbd-btn">
         Submit Review
       </button>
     </form>

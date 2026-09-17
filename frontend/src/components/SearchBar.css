@@ -1,0 +1,31 @@
+.sbd-searchbar-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sbd-search-input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.sbd-search-input:focus {
+  outline: 2px solid #e0a72e;
+}
+
+.sbd-search-btn {
+  background-color: #e0a72e;
+  color: #1f5c5c;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  transition: background-color 0.15s ease;
+}
+
+.sbd-search-btn:hover {
+  background-color: #c98f1e;
+  color: #fdf6e3;
+}

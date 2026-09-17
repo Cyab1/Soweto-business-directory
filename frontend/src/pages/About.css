@@ -1,0 +1,25 @@
+.sbd-page-title {
+  color: #1f5c5c;
+  font-weight: 700;
+}
+
+.sbd-lead {
+  font-size: 1.15rem;
+  color: #2c2c2c;
+  margin-bottom: 2rem;
+}
+
+.sbd-about-section {
+  margin-bottom: 1.75rem;
+}
+
+.sbd-about-section h2 {
+  color: #c98f1e;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.sbd-about-section p {
+  color: #2c2c2c;
+  line-height: 1.6;
+}

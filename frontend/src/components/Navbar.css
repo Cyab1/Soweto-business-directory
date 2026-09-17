@@ -1,0 +1,29 @@
+.sbd-navbar {
+  background-color: #1f5c5c;
+  padding: 0.75rem 0;
+}
+
+.sbd-brand {
+  color: #fdf6e3 !important;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.sbd-nav-link {
+  color: #fdf6e3 !important;
+  font-weight: 500;
+  margin-left: 1rem;
+  transition: color 0.15s ease;
+}
+
+.sbd-nav-link:hover {
+  color: #e0a72e !important;
+}
+
+.navbar-toggler {
+  border-color: rgba(253, 246, 227, 0.5);
+}
+
+.navbar-toggler-icon {
+  filter: invert(1);
+}
