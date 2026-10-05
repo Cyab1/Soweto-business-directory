@@ -134,6 +134,17 @@ class ClaimFlowTests(APITestCase):
         self.assertEqual(created.status, Business.Status.CLAIMED)
         self.assertEqual(self.claim(created, self.claimer).status_code, 409)
 
+    # ---- my claims ----
+    def test_my_claims_only_shows_own_claims(self):
+        self.claim(self.unclaimed, self.claimer)
+        self.client.force_authenticate(self.claimer2)
+        self.assertEqual(self.client.get(f"{API}/my-claims/").data["count"], 0)
+        self.client.force_authenticate(self.claimer)
+        self.assertEqual(self.client.get(f"{API}/my-claims/").data["count"], 1)
+        self.client.force_authenticate(None)
+        self.assertIn(self.client.get(f"{API}/my-claims/").status_code, (401, 403))
+
+
 class RegistrationTests(APITestCase):
     def setUp(self):
         cache.clear()
@@ -164,4 +175,4 @@ class RegistrationTests(APITestCase):
         self.register(is_staff=True, is_superuser=True)
         user = User.objects.get(username="newuser")
         self.assertFalse(user.is_staff)
-        self.assertFalse(user.is_superuser)        
+        self.assertFalse(user.is_superuser)

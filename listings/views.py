@@ -18,6 +18,7 @@ from rest_framework.throttling import (
     ScopedRateThrottle,
     UserRateThrottle,
 )
+from rest_framework.views import APIView
 
 from .models import Business, Category, ClaimRequest, Review, VerificationLog
 from .permissions import IsOwnerOrReadOnly
@@ -163,7 +164,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
             serialized.append(data)
         return Response({"count": len(serialized), "results": serialized})
 
-    
+
     # --- Claims (any authenticated user) ---------------------------------
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated],
             throttle_classes=[ClaimThrottle])
@@ -269,3 +270,22 @@ class ClaimReviewViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=["post"])
     def reject(self, request, pk=None):
         return self._review(request, pk, approve=False)
+
+
+class MyClaimsView(generics.ListAPIView):
+    """A logged-in user's own claim requests."""
+    serializer_class = ClaimRequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (ClaimRequest.objects.filter(claimant=self.request.user)
+                .select_related("business").order_by("-created_at"))
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({"id": user.id, "username": user.username,
+                         "email": user.email, "is_staff": user.is_staff})
