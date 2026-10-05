@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Business, Category, Review
+
+from .models import Business, Category, ClaimRequest, Review
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -17,16 +18,105 @@ class BusinessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
         fields = "__all__"
-        read_only_fields = ["owner", "is_verified", "verified_by", "verified_at"]
+        read_only_fields = [
+            "owner",
+            "status",
+            "source",
+            "external_id",
+            "is_verified",
+            "verified_by",
+            "verified_at",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = "__all__"
-        read_only_fields = ["user"]
+        read_only_fields = ["user", "created_at"]
 
     def validate_rating(self, value):
         if value < 1 or value > 5:
             raise serializers.ValidationError("Rating must be between 1 and 5.")
         return value
+
+
+# --- Claims ---------------------------------------------------------------
+
+class ClaimCreateSerializer(serializers.ModelSerializer):
+    """POST body for a user submitting a new claim on a business."""
+
+    class Meta:
+        model = ClaimRequest
+        fields = ["evidence", "contact_phone"]
+
+    def validate_evidence(self, value):
+        value = value.strip()
+        if len(value) < 20:
+            raise serializers.ValidationError(
+                "Please explain how you can prove you own this business."
+            )
+        return value
+
+    def validate_contact_phone(self, value):
+        value = value.strip()
+        if len(value) < 7:
+            raise serializers.ValidationError("Enter a valid contact phone number.")
+        return value
+
+
+class ClaimRequestSerializer(serializers.ModelSerializer):
+    """Read-only representation of a claim, for admin and 'my claims' views."""
+
+    business_name = serializers.CharField(source="business.name", read_only=True)
+    claimant_username = serializers.CharField(
+        source="claimant.username", read_only=True
+    )
+    reviewed_by_username = serializers.CharField(
+        source="reviewed_by.username", read_only=True, default=None
+    )
+
+    class Meta:
+        model = ClaimRequest
+        fields = [
+            "id",
+            "business",
+            "business_name",
+            "claimant",
+            "claimant_username",
+            "evidence",
+            "contact_phone",
+            "state",
+            "created_at",
+            "reviewed_by",
+            "reviewed_by_username",
+            "reviewed_at",
+            "review_note",
+        ]
+        read_only_fields = [
+            "id",
+            "business",
+            "business_name",
+            "claimant",
+            "claimant_username",
+            "evidence",
+            "contact_phone",
+            "state",
+            "created_at",
+            "reviewed_by",
+            "reviewed_by_username",
+            "reviewed_at",
+            "review_note",
+        ]
+
+
+class ClaimReviewSerializer(serializers.Serializer):
+    """Input for an admin approving or rejecting a claim."""
+
+    action = serializers.ChoiceField(choices=["approve", "reject"])
+    note = serializers.CharField(required=False, allow_blank=True, default="")
+
+    def validate_note(self, value):
+        return value.strip()

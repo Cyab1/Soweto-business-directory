@@ -40,13 +40,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # moved up: must come before CommonMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "directory.urls"
@@ -89,6 +89,8 @@ REST_FRAMEWORK = {
         "user": "1000/hour",
         # Tighter scope specifically for review creation — the main spam/fake-review vector.
         "reviews": "10/hour",
+        # Tighter scope for ownership claims — stops claim spam on listings.
+        "claims": "5/hour",
     },
 }
 
