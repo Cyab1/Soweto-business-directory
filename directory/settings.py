@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "drf_spectacular",
     "listings",
     "rest_framework",
     "django_filters",
@@ -91,7 +92,9 @@ REST_FRAMEWORK = {
         "reviews": "10/hour",
         # Tighter scope for ownership claims — stops claim spam on listings.
         "claims": "5/hour",
+        "register": "10/hour",
     },
+        "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # CORS — only allow specific known frontends, never wildcard in production.
@@ -153,3 +156,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Kasi Konekt API",
+    "DESCRIPTION": "Township business directory: discovery, verification and listing claims.",
+    "VERSION": "1.0.0",
+}

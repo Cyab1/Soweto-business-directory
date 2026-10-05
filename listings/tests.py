@@ -133,3 +133,35 @@ class ClaimFlowTests(APITestCase):
         self.assertEqual(created.owner, self.owner)
         self.assertEqual(created.status, Business.Status.CLAIMED)
         self.assertEqual(self.claim(created, self.claimer).status_code, 409)
+
+class RegistrationTests(APITestCase):
+    def setUp(self):
+        cache.clear()
+
+    def register(self, **overrides):
+        data = {"username": "newuser", "email": "new@example.com",
+                "password": "Str0ng-Pass-9731"}
+        data.update(overrides)
+        return self.client.post("/api/register/", data, format="json")
+
+    def test_register_then_login(self):
+        response = self.register()
+        self.assertEqual(response.status_code, 201)
+        self.assertNotIn("password", response.data)
+        token = self.client.post("/api/token/", {"username": "newuser",
+                                 "password": "Str0ng-Pass-9731"}, format="json")
+        self.assertEqual(token.status_code, 200)
+        self.assertIn("access", token.data)
+
+    def test_weak_password_rejected(self):
+        self.assertEqual(self.register(password="12345678").status_code, 400)
+
+    def test_duplicate_email_rejected(self):
+        self.register()
+        self.assertEqual(self.register(username="other").status_code, 400)
+
+    def test_cannot_self_register_as_staff(self):
+        self.register(is_staff=True, is_superuser=True)
+        user = User.objects.get(username="newuser")
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)        

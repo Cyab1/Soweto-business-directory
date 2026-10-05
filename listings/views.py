@@ -4,15 +4,20 @@ from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, generics, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (
+    AllowAny,
     IsAdminUser,
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
-from rest_framework.throttling import ScopedRateThrottle, UserRateThrottle
+from rest_framework.throttling import (
+    AnonRateThrottle,
+    ScopedRateThrottle,
+    UserRateThrottle,
+)
 
 from .models import Business, Category, ClaimRequest, Review, VerificationLog
 from .permissions import IsOwnerOrReadOnly
@@ -21,12 +26,17 @@ from .serializers import (
     CategorySerializer,
     ClaimCreateSerializer,
     ClaimRequestSerializer,
+    RegisterSerializer,
     ReviewSerializer,
 )
 
 
 class ClaimThrottle(UserRateThrottle):
     scope = "claims"  # rate comes from DEFAULT_THROTTLE_RATES["claims"] in settings
+
+
+class RegisterThrottle(AnonRateThrottle):
+    scope = "register"  # rate comes from DEFAULT_THROTTLE_RATES["register"]
 
 
 def haversine_km(lat1, lon1, lat2, lon2):
@@ -39,6 +49,23 @@ def haversine_km(lat1, lon1, lat2, lon2):
         + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
     )
     return 2 * R * math.asin(math.sqrt(a))
+
+
+class RegisterView(generics.CreateAPIView):
+    """Public signup. Throttled by client IP via the 'register' scope."""
+
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+    throttle_classes = [RegisterThrottle]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response(
+            {"id": user.id, "username": user.username, "email": user.email},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -95,7 +122,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
-    # --- Discovery -------------------------------------------------------
+        # --- Discovery -------------------------------------------------------
     @action(detail=False, methods=["get"], url_path="nearby",
             permission_classes=[IsAuthenticatedOrReadOnly])
     def nearby(self, request):
@@ -117,7 +144,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
             )
 
         candidates = Business.objects.filter(
-            is_verified=True, latitude__isnull=False, longitude__isnull=False
+            latitude__isnull=False, longitude__isnull=False
         )
         results = []
         for business in candidates:
@@ -126,7 +153,8 @@ class BusinessViewSet(viewsets.ModelViewSet):
             )
             if distance <= radius_km:
                 results.append((distance, business))
-        results.sort(key=lambda pair: pair[0])
+        # verified first, then nearest first within each group
+        results.sort(key=lambda pair: (not pair[1].is_verified, pair[0]))
 
         serialized = []
         for distance, business in results:
@@ -135,6 +163,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
             serialized.append(data)
         return Response({"count": len(serialized), "results": serialized})
 
+    
     # --- Claims (any authenticated user) ---------------------------------
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated],
             throttle_classes=[ClaimThrottle])

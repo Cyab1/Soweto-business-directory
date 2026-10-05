@@ -1,5 +1,8 @@
 from rest_framework import serializers
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+
 from .models import Business, Category, ClaimRequest, Review
 
 
@@ -120,3 +123,26 @@ class ClaimReviewSerializer(serializers.Serializer):
 
     def validate_note(self, value):
         return value.strip()
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, style={"input_type": "password"})
+
+    class Meta:
+        model = get_user_model()
+        fields = ["id", "username", "email", "password"]
+        read_only_fields = ["id"]
+        extra_kwargs = {"email": {"required": True}}
+
+    def validate_email(self, value):
+        if get_user_model().objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("An account with this email already exists.")
+        return value.lower()
+
+    def validate(self, attrs):
+        candidate = get_user_model()(username=attrs["username"], email=attrs["email"])
+        validate_password(attrs["password"], candidate)  # runs your AUTH_PASSWORD_VALIDATORS
+        return attrs
+
+    def create(self, validated_data):
+        return get_user_model().objects.create_user(**validated_data)
