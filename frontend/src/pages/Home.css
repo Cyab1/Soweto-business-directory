@@ -3,9 +3,15 @@
   min-height: 100%;
 }
 
+.sbd-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
 .sbd-hero {
-  background-color: #1f5c5c;
-  padding: 3.5rem 0 3rem;
+  background: linear-gradient(135deg, #1f5c5c 0%, #164545 100%);
+  padding: 4rem 0 3.5rem;
   text-align: center;
 }
 
@@ -25,6 +31,70 @@
 .sbd-searchbar-wrap {
   max-width: 500px;
   margin: 0 auto;
+}
+
+.sbd-radius-control {
+  margin-top: 1.5rem;
+  color: #fdf6e3;
+  font-size: 0.9rem;
+}
+
+.sbd-radius-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.sbd-radius-btn {
+  background-color: rgba(253, 246, 227, 0.12);
+  color: #fdf6e3;
+  border: 1px solid rgba(253, 246, 227, 0.4);
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.85rem;
+  transition: background-color 0.15s ease;
+}
+
+.sbd-radius-btn:hover {
+  background-color: rgba(253, 246, 227, 0.25);
+}
+
+.sbd-radius-btn-active {
+  background-color: #e0a72e;
+  color: #1f5c5c;
+  border-color: #e0a72e;
+  font-weight: 600;
+}
+
+.sbd-location-note {
+  margin-top: 1rem;
+  color: #fdf6e3;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.sbd-content {
+  padding-top: 2.5rem;
+  padding-bottom: 3rem;
+}
+
+.sbd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .sbd-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .sbd-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .sbd-empty-state {

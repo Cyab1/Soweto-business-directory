@@ -1,29 +1,36 @@
-.sbd-navbar {
-  background-color: #1f5c5c;
-  padding: 0.75rem 0;
-}
-
-.sbd-brand {
-  color: #fdf6e3 !important;
-  font-weight: 700;
-  font-size: 1.25rem;
-}
-
-.sbd-nav-link {
-  color: #fdf6e3 !important;
-  font-weight: 500;
+.sbd-nav-username {
+  color: #fdf6e3;
   margin-left: 1rem;
-  transition: color 0.15s ease;
+  font-weight: 500;
 }
 
-.sbd-nav-link:hover {
-  color: #e0a72e !important;
+.sbd-nav-logout-btn {
+  background: none;
+  border: 1px solid #fdf6e3;
+  color: #fdf6e3;
+  border-radius: 6px;
+  padding: 0.3rem 0.9rem;
+  margin-left: 1rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
 }
 
-.navbar-toggler {
-  border-color: rgba(253, 246, 227, 0.5);
+.sbd-nav-logout-btn:hover {
+  background-color: rgba(253, 246, 227, 0.15);
 }
 
-.navbar-toggler-icon {
-  filter: invert(1);
+.sbd-nav-signup-btn {
+  background-color: #e0a72e;
+  color: #1f5c5c !important;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.3rem 0.9rem;
+  margin-left: 1rem;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.sbd-nav-signup-btn:hover {
+  background-color: #c98f1e;
+  color: #fdf6e3 !important;
 }

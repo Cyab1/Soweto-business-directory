@@ -100,3 +100,15 @@
   color: var(--sbd-cream);
   text-decoration: none;
 }
+
+.sbd-distance-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background-color: rgba(44, 44, 44, 0.75);
+  color: var(--sbd-cream);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
