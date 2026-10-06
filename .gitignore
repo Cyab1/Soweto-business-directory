@@ -2,20 +2,40 @@
 *.log
 *.pot
 *.pyc
+*.py[cod]
 __pycache__/
 db.sqlite3
+db.sqlite3-journal
+*.sqlite3
 media/
 
 # Virtual environment
 venv/
+.venv/
+
+# Secrets and environment files
 .env
+.env.*
+!.env.example
+
+# Data files (real business data must never be committed; POPIA)
+data/
+sample.csv
+imports/
+
+# Generated files
+schema.json
+staticfiles/
+
+# Test and coverage output
+.pytest_cache/
+.coverage
+htmlcov/
 
 # IDE
 .vscode/
 .idea/
 
-# Static files
-staticfiles/
-
 # Other
 .DS_Store
+Thumbs.db
