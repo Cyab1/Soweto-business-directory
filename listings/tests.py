@@ -89,6 +89,30 @@ class ClaimFlowTests(APITestCase):
         other = ClaimRequest.objects.get(claimant=self.claimer2)
         self.assertEqual(other.state, ClaimRequest.State.REJECTED)
 
+    def test_only_staff_can_modify_categories(self):
+        self.client.force_authenticate(self.claimer)
+        self.assertEqual(
+            self.client.post(
+                f"{API}/categories/", {"name": "Spam"}, format="json"
+            ).status_code,
+            403,
+        )
+        self.assertEqual(
+            self.client.delete(f"{API}/categories/{self.category.id}/").status_code,
+            403,
+        )
+
+        self.client.force_authenticate(self.staff)
+        self.assertEqual(
+            self.client.post(
+                f"{API}/categories/", {"name": "Legit"}, format="json"
+            ).status_code,
+            201,
+        )
+
+        self.client.force_authenticate(None)
+        self.assertEqual(self.client.get(f"{API}/categories/").status_code, 200)
+
     def test_claim_cannot_be_reviewed_twice(self):
         self.claim(self.unclaimed, self.claimer)
         claim = ClaimRequest.objects.get()

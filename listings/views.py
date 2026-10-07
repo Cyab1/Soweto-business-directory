@@ -72,7 +72,12 @@ class RegisterView(generics.CreateAPIView):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_permissions(self):
+        # anyone can read; only staff can create, edit or delete
+        if self.action in ("list", "retrieve"):
+            return [AllowAny()]
+        return [IsAdminUser()]
 
 
 class BusinessViewSet(viewsets.ModelViewSet):
